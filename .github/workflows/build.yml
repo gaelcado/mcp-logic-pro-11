@@ -1,0 +1,27 @@
+name: Build and test
+on:
+  push:
+  pull_request:
+
+jobs:
+  macos:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unit and protocol tests
+        run: |
+          swift test
+          python3 scripts/protocol_smoke.py .build/debug/logic-pro-11-mcp
+      - name: Modern MCP Inspector integration
+        run: python3 scripts/inspector_check.py .build/debug/logic-pro-11-mcp
+      - name: Package universal preview
+        run: sh scripts/package.sh
+      - name: Check package
+        run: |
+          sh scripts/verify_package.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: logic-pro-11-mcp-macos-universal-preview
+          path: |
+            dist/*.zip
+            dist/SHA256SUMS.txt

@@ -1,0 +1,9 @@
+Logic Pro 11 MCP — préversion avec export MIDI
+
+1. Glissez « Logic Pro 11 MCP.app » dans le dossier Applications du Mac.
+2. Dans votre client MCP, indiquez comme commande :
+   /Applications/Logic Pro 11 MCP.app/Contents/MacOS/logic-pro-11-mcp
+3. Relancez le client et demandez « état de Logic Pro » ou « crée un motif MIDI ».
+
+Cette préversion ne modifie pas directement Logic. Les fichiers MIDI créés se trouvent dans Musique/Logic Pro 11 MCP Exports et peuvent être importés manuellement. Elle accepte MCP 2026-07-28 et 2025-11-25.
+Voir README.md et docs/PILOT.md du dépôt pour le diagnostic et la désinstallation.
