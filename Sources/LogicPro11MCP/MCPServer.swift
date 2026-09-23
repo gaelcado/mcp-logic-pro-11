@@ -8,11 +8,11 @@ enum MCPServer {
 
     static let tools: [[String: Any]] = [
         ["name": "logic_status", "title": "État de Logic Pro",
-         "description": "Lit la version de Logic ouverte, choisit le profil 11.1 ou 11.2 et indique si l'accessibilité est autorisée. Ne modifie pas le projet.",
+         "description": "Requiert Logic Pro ouvert pour lire sa version et choisir le profil 11.1 ou 11.2 ; indique aussi l'autorisation Accessibilité. Ne modifie pas le projet.",
          "inputSchema": ["type": "object", "properties": [:], "additionalProperties": false] as [String: Any],
          "annotations": ["readOnlyHint": true]],
         ["name": "logic_diagnostic", "title": "Diagnostic de connexion",
-         "description": "Donne un diagnostic court, sans nom de projet, pour préparer un test pilote. Ne modifie pas Logic.",
+         "description": "Donne un diagnostic court même si Logic est fermé, sans nom de projet, pour préparer un test pilote. Ne modifie pas Logic.",
          "inputSchema": ["type": "object", "properties": [:], "additionalProperties": false] as [String: Any],
          "annotations": ["readOnlyHint": true]]
     ]

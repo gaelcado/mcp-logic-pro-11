@@ -13,6 +13,8 @@ Révision implémentée : [MCP 2026-07-28](https://modelcontextprotocol.io/speci
 
 La mise en cache est **un conseil au client** (`ttlMs`, `cacheScope`), pas un cache interne au serveur. Comme les outils sont fixes, `listChanged` n'est pas annoncé et aucun événement d'invalidation n'est émis. La découverte du serveur, la liste des outils et leur chargement dans le contexte d'un assistant sont trois étapes distinctes ; cette dernière dépend du client, pas du serveur.
 
+Chaque diagnostic structuré renvoie `status` et `outcome` (`confirmed`, `uncertain` ou `refused`). Ce verdict décrit seulement l'observation faite par ce processus sur le Mac courant ; le champ `verification: unqualified_without_logic_pilots` rappelle que la compatibilité Logic n'a pas été établie par les pilotes.
+
 La suite locale n'est pas une suite officielle de conformité. Elle vérifie les points essentiels des pages [Discovery](https://modelcontextprotocol.io/specification/2026-07-28/server/discover), [Tools](https://modelcontextprotocol.io/specification/2026-07-28/server/tools), [métadonnées](https://modelcontextprotocol.io/specification/2026-07-28/basic/index#meta), [Caching](https://modelcontextprotocol.io/specification/2026-07-28/server/utilities/caching) et [Subscriptions](https://modelcontextprotocol.io/specification/2026-07-28/basic/patterns/subscriptions).
 
 Le [MCP Inspector CLI](https://modelcontextprotocol.io/docs/2026-07-28/tools/inspector/cli) version 2.7.0 a aussi été exécuté localement en mode `protocolEra: modern` : connexion/discovery, `tools/list` et `tools/call` ont réussi. Son mode par défaut est `legacy` et envoie `initialize` 2025-11-25, que ce serveur refuse correctement. Ces essais ne qualifient pas Logic Pro ni tous les aspects de la spécification.

@@ -36,7 +36,13 @@ struct ProbeResult {
     let note: String
 
     var dictionary: [String: Any] {
-        ["status": status,
+        let outcome: String
+        switch status {
+        case "detected": outcome = accessibilityGranted && windowCount == nil ? "uncertain" : "confirmed"
+        default: outcome = "refused"
+        }
+        return ["status": status,
+         "outcome": outcome,
          "logicVersion": version as Any? ?? NSNull(),
          "profile": profile as Any? ?? NSNull(),
          "accessibilityGranted": accessibilityGranted,

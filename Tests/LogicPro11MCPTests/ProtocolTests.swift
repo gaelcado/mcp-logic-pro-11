@@ -46,6 +46,7 @@ final class ProtocolTests: XCTestCase {
         XCTAssertEqual(call["resultType"] as? String, "complete")
         XCTAssertEqual(call["isError"] as? Bool, false)
         XCTAssertEqual((call["structuredContent"] as? [String: Any])?["verification"] as? String, "unqualified_without_logic_pilots")
+        XCTAssertNotNil((call["structuredContent"] as? [String: Any])?["outcome"] as? String)
         XCTAssertEqual(errorCode(MCPServer.process(request("tools/call", extra: ["name": "logic_play", "arguments": [:] as [String: Any]]))), -32602)
         XCTAssertEqual(errorCode(MCPServer.process(request("tools/call", extra: ["name": "logic_status", "arguments": ["unexpected": true]]))), -32602)
     }
