@@ -31,5 +31,7 @@ else
 fi
 
 ditto -c -k --sequesterRsrc --keepParent "$APP" "$OUT/logic-pro-11-mcp-$VERSION-macos-universal.zip"
+cp "$ROOT/packaging/INSTALLATION.txt" "$OUT/Lisez-moi.txt"
+(cd "$OUT" && zip -q "logic-pro-11-mcp-$VERSION-macos-universal.zip" Lisez-moi.txt)
 (cd "$OUT" && shasum -a 256 "logic-pro-11-mcp-$VERSION-macos-universal.zip" > SHA256SUMS.txt)
 echo "Paquet créé : $OUT/logic-pro-11-mcp-$VERSION-macos-universal.zip"

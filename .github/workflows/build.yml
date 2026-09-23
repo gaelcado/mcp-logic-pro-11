@@ -18,9 +18,7 @@ jobs:
         run: sh scripts/package.sh
       - name: Check package
         run: |
-          lipo -archs "dist/Logic Pro 11 MCP.app/Contents/MacOS/logic-pro-11-mcp"
-          codesign --verify --deep --strict "dist/Logic Pro 11 MCP.app"
-          (cd dist && shasum -a 256 -c SHA256SUMS.txt)
+          sh scripts/verify_package.sh
       - uses: actions/upload-artifact@v4
         with:
           name: logic-pro-11-mcp-macos-universal-preview
