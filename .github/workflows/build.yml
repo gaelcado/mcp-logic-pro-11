@@ -12,6 +12,8 @@ jobs:
         run: |
           swift test
           python3 scripts/protocol_smoke.py .build/debug/logic-pro-11-mcp
+      - name: Modern MCP Inspector integration
+        run: python3 scripts/inspector_check.py .build/debug/logic-pro-11-mcp
       - name: Package universal preview
         run: sh scripts/package.sh
       - name: Check package
