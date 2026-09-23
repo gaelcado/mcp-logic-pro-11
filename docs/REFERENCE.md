@@ -18,7 +18,7 @@ La [révision `ffcf0bf`](https://github.com/MongLong0214/logic-pro-mcp/tree/ffcf
 
 | Surface amont | Valeur possible | Risque pour Logic 11.1/11.2 | Décision |
 | --- | --- | --- | --- |
-| MIDI SMF et décodage MCU purs | Utiles pour notes et transport | Port matériel, assignation et retour d'état dépendent du poste | Étudier fichier par fichier après les pilotes ; aucun code copié aujourd'hui |
+| MIDI SMF et décodage MCU purs | Utiles pour notes et transport | Port matériel, assignation et retour d'état dépendent du poste | Export MIDI format 1 réimplémenté indépendamment, sans code amont ; MCU différé |
 | Chemins AX, menus et localisation | Potentiellement utiles aux pistes et au mixage | Noms/arbres d'interface non mesurés sur 11.1/11.2 | Ne pas importer |
 | Routeur avec confirmation après action | Principe de refus sûr | Un succès technique peut n'avoir aucun effet dans Logic | Réimplémenter seulement le principe après preuve live |
 | Serveur Swift/SDK MCP amont | Exemple de structure | Cible 12.x et protocole 2026-07-28 non démontré | Serveur indépendant sans dépendance externe |

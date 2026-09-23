@@ -24,7 +24,7 @@ final class ProtocolTests: XCTestCase {
 
         let listed = result(MCPServer.process(request("tools/list")))
         let names = (listed["tools"] as? [[String: Any]])?.compactMap { $0["name"] as? String }
-        XCTAssertEqual(names, ["logic_status", "logic_diagnostic"])
+        XCTAssertEqual(names, ["logic_status", "logic_diagnostic", "midi_create_pattern", "midi_inspect_export"])
         XCTAssertEqual(listed["resultType"] as? String, "complete")
         XCTAssertEqual(listed["cacheScope"] as? String, "public")
         XCTAssertNotNil(listed["ttlMs"] as? Int)
@@ -48,7 +48,7 @@ final class ProtocolTests: XCTestCase {
         XCTAssertEqual((call["structuredContent"] as? [String: Any])?["verification"] as? String, "unqualified_without_logic_pilots")
         XCTAssertNotNil((call["structuredContent"] as? [String: Any])?["outcome"] as? String)
         XCTAssertEqual((call["structuredContent"] as? [String: Any])?["mcpProtocolVersion"] as? String, "2026-07-28")
-        XCTAssertEqual((call["structuredContent"] as? [String: Any])?["serverVersion"] as? String, "0.1.0-preview")
+        XCTAssertEqual((call["structuredContent"] as? [String: Any])?["serverVersion"] as? String, "0.2.0-preview")
         XCTAssertFalse(((call["content"] as? [[String: Any]])?.first?["text"] as? String ?? "").isEmpty)
         XCTAssertEqual(errorCode(MCPServer.process(request("tools/call", extra: ["name": "logic_play", "arguments": [:] as [String: Any]]))), -32602)
         XCTAssertEqual(errorCode(MCPServer.process(request("tools/call", extra: ["name": "logic_status", "arguments": ["unexpected": true]]))), -32602)
@@ -87,7 +87,7 @@ final class ProtocolTests: XCTestCase {
         XCTAssertEqual(errorCode(legacy.process(["jsonrpc": "2.0", "id": 2, "method": "tools/list"])), -32600)
         XCTAssertNil(legacy.process(["jsonrpc": "2.0", "method": "notifications/initialized"]))
         let listed = result(legacy.process(["jsonrpc": "2.0", "id": 3, "method": "tools/list"]))
-        XCTAssertEqual((listed["tools"] as? [[String: Any]])?.count, 2)
+        XCTAssertEqual((listed["tools"] as? [[String: Any]])?.count, 4)
         XCTAssertNil(listed["ttlMs"])
         let called = result(legacy.process(["jsonrpc": "2.0", "id": 4, "method": "tools/call",
             "params": ["name": "logic_status", "arguments": [:] as [String: Any]]]))

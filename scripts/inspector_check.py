@@ -36,7 +36,7 @@ with tempfile.TemporaryDirectory(prefix="logic-mcp-inspector-") as temporary:
 
     listed = call("modern", "tools/list")
     assert [tool["name"] for tool in listed["tools"]] == [
-        "logic_status", "logic_diagnostic"
+        "logic_status", "logic_diagnostic", "midi_create_pattern", "midi_inspect_export"
     ], listed
 
     called = call("modern", "tools/call", "--tool-name", "logic_status", "--tool-args-json", "{}")
@@ -47,7 +47,7 @@ with tempfile.TemporaryDirectory(prefix="logic-mcp-inspector-") as temporary:
     assert old["protocolVersion"] == "2025-11-25", old
     old_list = call("legacy", "tools/list")
     assert [tool["name"] for tool in old_list["tools"]] == [
-        "logic_status", "logic_diagnostic"
+        "logic_status", "logic_diagnostic", "midi_create_pattern", "midi_inspect_export"
     ], old_list
     old_call = call("legacy", "tools/call", "--tool-name", "logic_status", "--tool-args-json", "{}")
     assert old_call["structuredContent"]["mcpProtocolVersion"] == "2025-11-25", old_call

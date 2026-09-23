@@ -2,7 +2,7 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-ZIP="$ROOT/dist/logic-pro-11-mcp-0.1.0-preview-macos-universal.zip"
+ZIP="$ROOT/dist/logic-pro-11-mcp-0.2.0-preview-macos-universal.zip"
 TEMP=$(mktemp -d)
 trap 'rm -rf "$TEMP"' EXIT HUP INT TERM
 

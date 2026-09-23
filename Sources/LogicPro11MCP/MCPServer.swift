@@ -4,7 +4,7 @@ import CoreFoundation
 enum MCPServer {
     static let protocolVersion = "2026-07-28"
     static let supportedVersions = [protocolVersion, LegacyServer.protocolVersion]
-    static let serverInfo: [String: String] = ["name": "logic-pro-11-mcp", "version": "0.1.0-preview"]
+    static let serverInfo: [String: String] = ["name": "logic-pro-11-mcp", "version": "0.2.0-preview"]
     static let serverMeta: [String: Any] = ["io.modelcontextprotocol/serverInfo": serverInfo]
 
     static let tools: [[String: Any]] = [
@@ -15,6 +15,36 @@ enum MCPServer {
         ["name": "logic_diagnostic", "title": "Diagnostic de connexion",
          "description": "Donne un diagnostic court même si Logic est fermé, sans nom de projet, pour préparer un test pilote. Ne modifie pas Logic.",
          "inputSchema": ["type": "object", "properties": [:], "additionalProperties": false] as [String: Any],
+         "annotations": ["readOnlyHint": true]],
+        ["name": "midi_create_pattern", "title": "Créer un motif MIDI",
+         "description": "Crée un fichier MIDI format 1 dans le dossier Musique pour import manuel dans Logic Pro. Ne modifie pas le projet Logic. L'import sera qualifié par les pilotes 11.1 et 11.2.",
+         "inputSchema": ["type": "object", "additionalProperties": false,
+                         "properties": [
+                            "name": ["type": "string", "description": "Nom simple (lettres, chiffres, espace, tiret, souligné ; 1 à 40 caractères)."],
+                            "tempoBPM": ["type": "integer", "minimum": 20, "maximum": 300],
+                            "beatsPerBar": ["type": "integer", "minimum": 2, "maximum": 12],
+                            "tracks": ["type": "array", "minItems": 1, "maxItems": 8,
+                                       "items": ["type": "object", "additionalProperties": false,
+                                                 "required": ["name", "notes"],
+                                                 "properties": [
+                                                    "name": ["type": "string"],
+                                                    "channel": ["type": "integer", "minimum": 1, "maximum": 16],
+                                                    "notes": ["type": "array", "maxItems": 512,
+                                                              "items": ["type": "object", "additionalProperties": false,
+                                                                        "required": ["pitch", "startBeat", "durationBeats"],
+                                                                        "properties": [
+                                                                            "pitch": ["type": "integer", "minimum": 0, "maximum": 127],
+                                                                            "velocity": ["type": "integer", "minimum": 1, "maximum": 127],
+                                                                            "startBeat": ["type": "number", "minimum": 0],
+                                                                            "durationBeats": ["type": "number", "exclusiveMinimum": 0]
+                                                                        ]]]
+                                                 ]]]
+                         ], "required": ["tracks"]] as [String: Any],
+         "annotations": ["readOnlyHint": false, "destructiveHint": false]],
+        ["name": "midi_inspect_export", "title": "Vérifier un export MIDI",
+         "description": "Lit un fichier .mid du dossier d'export du serveur et indique pistes, notes, tempo et empreinte SHA-256. Ne lit pas les projets Logic.",
+         "inputSchema": ["type": "object", "additionalProperties": false,
+                         "properties": ["fileName": ["type": "string"]], "required": ["fileName"]] as [String: Any],
          "annotations": ["readOnlyHint": true]]
     ]
 
@@ -41,7 +71,7 @@ enum MCPServer {
         case "server/discover":
             return success(id: id, result: ["supportedVersions": supportedVersions,
                                             "capabilities": ["tools": [:] as [String: Any]],
-                                            "instructions": "Deux outils de diagnostic en lecture seule. Les commandes de transport, MIDI et mixage attendent la qualification des pilotes Logic 11.1 et 11.2.",
+                                            "instructions": "Diagnostics et création de motifs MIDI pour import manuel. Les fonctions directes dans Logic attendent la qualification des pilotes 11.1 et 11.2.",
                                             "ttlMs": 300_000, "cacheScope": "public"])
         case "tools/list":
             guard params["cursor"] == nil else { return error(id: id, code: -32602, message: "Invalid cursor") }
@@ -52,17 +82,11 @@ enum MCPServer {
                 return error(id: id, code: -32602, message: "Invalid tool arguments")
             }
             let arguments = params["arguments"] as? [String: Any] ?? [:]
-            guard arguments.isEmpty else { return error(id: id, code: -32602, message: "Invalid tool arguments") }
             guard tools.contains(where: { $0["name"] as? String == name }) else {
                 return error(id: id, code: -32602, message: "Unknown tool")
             }
-            let probe = LogicProbe.inspect()
-            let details = probe.dictionary
-            let message = name == "logic_diagnostic"
-                ? "\(probe.summary) macOS \(details["macOSVersion"] ?? "inconnu") ; serveur \(details["serverVersion"] ?? "inconnu")."
-                : probe.summary
-            return success(id: id, result: ["content": [["type": "text", "text": message]],
-                                            "structuredContent": details, "isError": false])
+            do { return success(id: id, result: try MusicToolRouter.call(name: name, arguments: arguments)) }
+            catch { return Self.error(id: id, code: -32602, message: String(describing: error)) }
         case "subscriptions/listen":
             guard params["notifications"] is [String: Any] else {
                 return error(id: id, code: -32602, message: "Invalid notification filter")

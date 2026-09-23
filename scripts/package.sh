@@ -2,7 +2,7 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-VERSION=0.1.0-preview
+VERSION=0.2.0-preview
 OUT="$ROOT/dist"
 APP="$OUT/Logic Pro 11 MCP.app"
 mkdir -p "$OUT"

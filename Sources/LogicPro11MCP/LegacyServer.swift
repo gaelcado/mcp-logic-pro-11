@@ -37,7 +37,7 @@ struct LegacyServer {
                 "protocolVersion": Self.protocolVersion,
                 "capabilities": ["tools": [:] as [String: Any]],
                 "serverInfo": MCPServer.serverInfo,
-                "instructions": "Deux diagnostics en lecture seule ; les actions musicales attendent les pilotes Logic 11.1 et 11.2."
+                "instructions": "Diagnostics et motifs MIDI pour import manuel ; les actions directes dans Logic attendent les pilotes 11.1 et 11.2."
             ])
         }
         guard ready else { return error(id: id, code: -32600, message: "Server not initialized") }
@@ -55,17 +55,18 @@ struct LegacyServer {
                 return error(id: id, code: -32602, message: "Invalid tool arguments")
             }
             let arguments = params["arguments"] as? [String: Any] ?? [:]
-            guard arguments.isEmpty else { return error(id: id, code: -32602, message: "Invalid tool arguments") }
             guard MCPServer.tools.contains(where: { $0["name"] as? String == name }) else {
                 return error(id: id, code: -32602, message: "Unknown tool")
             }
-            let diagnostic = LogicProbe.inspect().dictionary
-            var legacyDiagnostic = diagnostic
-            legacyDiagnostic["mcpProtocolVersion"] = Self.protocolVersion
-            let json = (try? JSONSerialization.data(withJSONObject: legacyDiagnostic, options: [.sortedKeys]))
-                .flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
-            return success(id: id, result: ["content": [["type": "text", "text": json]],
-                                            "structuredContent": legacyDiagnostic, "isError": false])
+            do {
+                var result = try MusicToolRouter.call(name: name, arguments: arguments)
+                var details = result["structuredContent"] as? [String: Any] ?? [:]
+                details["mcpProtocolVersion"] = Self.protocolVersion
+                result["structuredContent"] = details
+                return success(id: id, result: result)
+            } catch {
+                return self.error(id: id, code: -32602, message: String(describing: error))
+            }
         default:
             return error(id: id, code: -32601, message: "Method not found")
         }

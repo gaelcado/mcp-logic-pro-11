@@ -13,7 +13,7 @@ func emit(_ message: [String: Any]) {
 }
 
 if CommandLine.arguments.contains("--version") {
-    print("logic-pro-11-mcp 0.1.0-preview · MCP 2026-07-28")
+    print("logic-pro-11-mcp 0.2.0-preview · MCP 2026-07-28")
 } else if CommandLine.arguments.contains("--diagnose") {
     let result = LogicProbe.inspect().dictionary
     if let data = try? JSONSerialization.data(withJSONObject: result, options: [.prettyPrinted, .sortedKeys]),
