@@ -32,7 +32,7 @@ L'assistant doit prendre en charge la révision **2026-07-28**. Un client qui ne
 
 ## Diagnostic et retrait
 
-L'outil **Diagnostic de connexion** donne la version de Logic, le profil choisi, l'état de l'autorisation Accessibilité et un compte de fenêtres. Il ne donne ni nom de projet ni nom de piste. Si Logic est fermé, si sa version est illisible ou si plusieurs processus correspondent, le serveur refuse de deviner un profil. Aucun réglage manuel 11.1/11.2 n'est nécessaire tant que la lecture fiable de la version n'a pas été démentie par les pilotes.
+L'outil **Diagnostic de connexion** donne la version de Logic, le profil choisi, les versions du serveur, de MCP et de macOS, l'architecture du Mac, l'état de l'autorisation Accessibilité et un compte de fenêtres. Il ne donne ni nom de projet ni nom de piste. Si Logic est fermé, si sa version est illisible ou si plusieurs processus correspondent, le serveur refuse de deviner un profil. Aucun réglage manuel 11.1/11.2 n'est nécessaire tant que la lecture fiable de la version n'a pas été démentie par les pilotes.
 
 Pour désinstaller : supprimez **uniquement** l'entrée « Logic Pro 11 MCP » dans la configuration de votre assistant, relancez celui-ci, puis mettez `Logic Pro 11 MCP.app` à la Corbeille. Si vous aviez accordé Accessibilité, retirez cette autorisation dans Réglages Système > Confidentialité et sécurité > Accessibilité. Cette procédure ne touche ni vos projets ni les préférences Logic.
 

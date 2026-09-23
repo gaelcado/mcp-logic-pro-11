@@ -41,8 +41,20 @@ struct ProbeResult {
         case "detected": outcome = accessibilityGranted && windowCount == nil ? "uncertain" : "confirmed"
         default: outcome = "refused"
         }
+        let os = ProcessInfo.processInfo.operatingSystemVersion
+        #if arch(arm64)
+        let architecture = "arm64"
+        #elseif arch(x86_64)
+        let architecture = "x86_64"
+        #else
+        let architecture = "unknown"
+        #endif
         return ["status": status,
          "outcome": outcome,
+         "serverVersion": MCPServer.serverInfo["version"] ?? "unknown",
+         "mcpProtocolVersion": MCPServer.protocolVersion,
+         "macOSVersion": "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)",
+         "architecture": architecture,
          "logicVersion": version as Any? ?? NSNull(),
          "profile": profile as Any? ?? NSNull(),
          "accessibilityGranted": accessibilityGranted,
