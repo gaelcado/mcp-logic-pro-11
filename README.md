@@ -1,6 +1,6 @@
 # MCP Logic Pro 11
 
-Une préversion pour connecter **Logic Pro 11.1 ou 11.2 sur Mac** à un assistant compatible avec **MCP 2026-07-28**. Elle donne aujourd'hui l'état de Logic et un diagnostic. Elle ne lance pas la lecture et ne modifie pas de projet musical.
+Une préversion pour connecter **Logic Pro 11.1 ou 11.2 sur Mac** à un assistant MCP. Elle prend en charge la révision **2026-07-28** et le démarrage plus ancien **2025-11-25**. Elle donne aujourd'hui l'état de Logic et un diagnostic. Elle ne lance pas la lecture et ne modifie pas de projet musical.
 
 ## Ce qui marche aujourd'hui
 
@@ -9,7 +9,7 @@ Une préversion pour connecter **Logic Pro 11.1 ou 11.2 sur Mac** à un assistan
 | Détecter Logic ouvert et sa version | Implémenté, à vérifier sur Logic réel |
 | Choisir automatiquement le profil 11.1 ou 11.2 | Implémenté, à vérifier sur les deux versions |
 | Vérifier l'autorisation Accessibilité et compter les fenêtres | Implémenté, à vérifier sur Logic réel |
-| Découverte et appels MCP 2026-07-28 | Testés sur le protocole, sans Logic local |
+| Découverte et appels MCP 2026-07-28 et 2025-11-25 | Testés avec MCP Inspector, sans Logic local |
 | Lecture, transport, pistes, MIDI, mixage | Pas encore proposés : comportement à mesurer sur les deux machines pilotes |
 
 Les tests automatiques vérifient le serveur et ses réponses MCP. **Ils ne prouvent pas que les commandes fonctionnent dans Logic.** Deux musiciens, l'un sur 11.1 et l'autre sur 11.2, doivent tester la préversion avant toute annonce de compatibilité. Voir [la procédure pilote](docs/PILOT.md).
@@ -18,7 +18,7 @@ Les tests automatiques vérifient le serveur et ses réponses MCP. **Ils ne prou
 
 1. Téléchargez le fichier `logic-pro-11-mcp-0.1.0-preview-macos-universal.zip` depuis l'artefact de la [dernière compilation GitHub](https://github.com/gaelcado/mcp-logic-pro-11/actions/workflows/build.yml), puis décompressez-le.
 2. Glissez `Logic Pro 11 MCP.app` dans le dossier **Applications** du Mac. Aucun Xcode, Swift, Node ou Homebrew n'est requis pour lancer le paquet.
-3. Dans votre assistant **compatible MCP 2026-07-28 et avec les serveurs locaux stdio**, ajoutez un serveur avec la commande ci-dessous et laissez les arguments vides.
+3. Dans votre assistant **compatible avec les serveurs MCP locaux stdio**, ajoutez un serveur avec la commande ci-dessous et laissez les arguments vides.
 
    ```text
    /Applications/Logic Pro 11 MCP.app/Contents/MacOS/logic-pro-11-mcp
@@ -28,7 +28,7 @@ Les tests automatiques vérifient le serveur et ses réponses MCP. **Ils ne prou
 
 Le paquet de préversion est **signé localement, sans notarisation Apple** : macOS peut demander d'autoriser son ouverture dans Réglages Système > Confidentialité et sécurité. La distribution publique simple nécessitera une signature Developer ID et une notarisation ; elles ne sont pas disponibles dans cette tâche. N'accordez l'accès Accessibilité que si le diagnostic signale qu'il manque et si vous souhaitez essayer la lecture des fenêtres. Le serveur ne demande pas d'accès complet au disque ni de permission Apple Events.
 
-L'assistant doit prendre en charge la révision **2026-07-28**. Un client qui ne connaît que le vieux démarrage `initialize` ne se connectera pas à cette préversion ; consultez les capacités de votre assistant. Les formats de configuration varient selon le client.
+Le serveur choisit automatiquement l'échange **2026-07-28** ou **2025-11-25** selon la demande de l'assistant. Les formats de configuration varient selon le client ; aucun réglage de version n'est demandé au musicien.
 
 ## Diagnostic et retrait
 

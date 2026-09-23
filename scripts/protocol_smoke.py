@@ -29,7 +29,7 @@ assert not run.stderr, run.stderr
 responses = [json.loads(line) for line in run.stdout.splitlines()]
 assert len(responses) == 5, responses
 assert [r.get("id") for r in responses] == [1, 2, 3, None, 5], responses
-assert responses[0]["result"]["supportedVersions"] == ["2026-07-28"]
+assert responses[0]["result"]["supportedVersions"] == ["2026-07-28", "2025-11-25"]
 assert responses[1]["result"]["tools"] == responses[4]["result"]["tools"]
 assert responses[2]["result"]["structuredContent"]["verification"] == "unqualified_without_logic_pilots"
 assert responses[3]["method"] == "notifications/subscriptions/acknowledged"

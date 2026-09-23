@@ -20,6 +20,7 @@ if CommandLine.arguments.contains("--version") {
        let text = String(data: data, encoding: .utf8) { print(text) }
 } else {
     var subscriptions: [String: Any] = [:]
+    var legacy: LegacyServer?
     while let line = readLine() {
         guard let data = line.data(using: .utf8) else { continue }
         let input: Any
@@ -35,6 +36,14 @@ if CommandLine.arguments.contains("--version") {
            let params = request["params"] as? [String: Any],
            let cancelledID = params["requestId"] {
             subscriptions.removeValue(forKey: subscriptionKey(cancelledID))
+            continue
+        }
+        if let request = input as? [String: Any],
+           let method = request["method"] as? String,
+           method == "initialize" || (legacy != nil &&
+             (request["params"] as? [String: Any])?["_meta"] == nil) {
+            if legacy == nil { legacy = LegacyServer() }
+            if let reply = legacy?.process(input) { emit(reply) }
             continue
         }
         guard let reply = MCPServer.process(input) else { continue }

@@ -35,6 +35,13 @@ struct ProbeResult {
     let windowCount: Int?
     let note: String
 
+    var summary: String {
+        guard status == "detected", let version, let profile else { return note }
+        let accessibility = accessibilityGranted ? "autorisée" : "non autorisée"
+        let windows = windowCount.map { " ; \($0) fenêtre(s) détectée(s)" } ?? ""
+        return "Logic Pro \(version) ; profil \(profile) ; Accessibilité \(accessibility)\(windows). Actions musicales non qualifiées."
+    }
+
     var dictionary: [String: Any] {
         let outcome: String
         switch status {

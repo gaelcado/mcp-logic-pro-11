@@ -16,7 +16,7 @@ final class ProtocolTests: XCTestCase {
     func testDiscoverAndListAreModernAndCacheable() {
         let discover = result(MCPServer.process(request("server/discover")))
         XCTAssertEqual(discover["resultType"] as? String, "complete")
-        XCTAssertEqual(discover["supportedVersions"] as? [String], ["2026-07-28"])
+        XCTAssertEqual(discover["supportedVersions"] as? [String], ["2026-07-28", "2025-11-25"])
         XCTAssertNotNil((discover["capabilities"] as? [String: Any])?["tools"])
         XCTAssertEqual(discover["cacheScope"] as? String, "public")
         XCTAssertNotNil(discover["ttlMs"] as? Int)
@@ -37,7 +37,7 @@ final class ProtocolTests: XCTestCase {
         let versionError = MCPServer.process(request("server/discover", version: "2025-11-25"))
         XCTAssertEqual(errorCode(versionError), -32022)
         let data = (versionError?["error"] as? [String: Any])?["data"] as? [String: Any]
-        XCTAssertEqual(data?["supported"] as? [String], ["2026-07-28"])
+        XCTAssertEqual(data?["supported"] as? [String], ["2026-07-28", "2025-11-25"])
         XCTAssertEqual(data?["requested"] as? String, "2025-11-25")
     }
 
@@ -49,8 +49,12 @@ final class ProtocolTests: XCTestCase {
         XCTAssertNotNil((call["structuredContent"] as? [String: Any])?["outcome"] as? String)
         XCTAssertEqual((call["structuredContent"] as? [String: Any])?["mcpProtocolVersion"] as? String, "2026-07-28")
         XCTAssertEqual((call["structuredContent"] as? [String: Any])?["serverVersion"] as? String, "0.1.0-preview")
+        XCTAssertFalse(((call["content"] as? [[String: Any]])?.first?["text"] as? String ?? "").isEmpty)
         XCTAssertEqual(errorCode(MCPServer.process(request("tools/call", extra: ["name": "logic_play", "arguments": [:] as [String: Any]]))), -32602)
         XCTAssertEqual(errorCode(MCPServer.process(request("tools/call", extra: ["name": "logic_status", "arguments": ["unexpected": true]]))), -32602)
+        XCTAssertEqual(errorCode(MCPServer.process(request("tools/call", extra: ["name": "logic_status", "arguments": "bad"]))), -32602)
+        let noArguments = result(MCPServer.process(request("tools/call", extra: ["name": "logic_status"])))
+        XCTAssertNotNil(noArguments["structuredContent"])
     }
 
     func testProfileSelectionDoesNotGuess() {
@@ -69,5 +73,27 @@ final class ProtocolTests: XCTestCase {
         let params = response?["params"] as? [String: Any]
         XCTAssertEqual((params?["_meta"] as? [String: Any])?["io.modelcontextprotocol/subscriptionId"] as? Int, 27)
         XCTAssertEqual((params?["notifications"] as? [String: Any])?.count, 0)
+    }
+
+    func testLegacyHandshakeAndTools() {
+        var legacy = LegacyServer()
+        let initRequest: [String: Any] = ["jsonrpc": "2.0", "id": 1,
+            "method": "initialize", "params": ["protocolVersion": "2025-11-25",
+                "capabilities": [:] as [String: Any],
+                "clientInfo": ["name": "test", "version": "1"]]]
+        let initialized = result(legacy.process(initRequest))
+        XCTAssertEqual(initialized["protocolVersion"] as? String, "2025-11-25")
+        XCTAssertNil(initialized["resultType"])
+        XCTAssertEqual(errorCode(legacy.process(["jsonrpc": "2.0", "id": 2, "method": "tools/list"])), -32600)
+        XCTAssertNil(legacy.process(["jsonrpc": "2.0", "method": "notifications/initialized"]))
+        let listed = result(legacy.process(["jsonrpc": "2.0", "id": 3, "method": "tools/list"]))
+        XCTAssertEqual((listed["tools"] as? [[String: Any]])?.count, 2)
+        XCTAssertNil(listed["ttlMs"])
+        let called = result(legacy.process(["jsonrpc": "2.0", "id": 4, "method": "tools/call",
+            "params": ["name": "logic_status", "arguments": [:] as [String: Any]]]))
+        XCTAssertEqual((called["structuredContent"] as? [String: Any])?["mcpProtocolVersion"] as? String, "2025-11-25")
+        XCTAssertNil(called["resultType"])
+        XCTAssertEqual(errorCode(legacy.process(["jsonrpc": "2.0", "id": 5, "method": "tools/call",
+            "params": ["name": "logic_status", "arguments": "not an object"]])), -32602)
     }
 }

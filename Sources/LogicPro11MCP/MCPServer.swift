@@ -3,6 +3,7 @@ import CoreFoundation
 
 enum MCPServer {
     static let protocolVersion = "2026-07-28"
+    static let supportedVersions = [protocolVersion, LegacyServer.protocolVersion]
     static let serverInfo: [String: String] = ["name": "logic-pro-11-mcp", "version": "0.1.0-preview"]
     static let serverMeta: [String: Any] = ["io.modelcontextprotocol/serverInfo": serverInfo]
 
@@ -34,11 +35,11 @@ enum MCPServer {
         }
         guard version == protocolVersion else {
             return error(id: id, code: -32022, message: "Unsupported protocol version",
-                         data: ["supported": [protocolVersion], "requested": version])
+                         data: ["supported": supportedVersions, "requested": version])
         }
         switch method {
         case "server/discover":
-            return success(id: id, result: ["supportedVersions": [protocolVersion],
+            return success(id: id, result: ["supportedVersions": supportedVersions,
                                             "capabilities": ["tools": [:] as [String: Any]],
                                             "instructions": "Deux outils de diagnostic en lecture seule. Les commandes de transport, MIDI et mixage attendent la qualification des pilotes Logic 11.1 et 11.2.",
                                             "ttlMs": 300_000, "cacheScope": "public"])
@@ -47,16 +48,21 @@ enum MCPServer {
             return success(id: id, result: ["tools": tools, "ttlMs": 300_000, "cacheScope": "public"])
         case "tools/call":
             guard let name = params["name"] as? String,
-                  let arguments = params["arguments"] as? [String: Any], arguments.isEmpty else {
+                  params["arguments"] == nil || params["arguments"] is [String: Any] else {
                 return error(id: id, code: -32602, message: "Invalid tool arguments")
             }
+            let arguments = params["arguments"] as? [String: Any] ?? [:]
+            guard arguments.isEmpty else { return error(id: id, code: -32602, message: "Invalid tool arguments") }
             guard tools.contains(where: { $0["name"] as? String == name }) else {
                 return error(id: id, code: -32602, message: "Unknown tool")
             }
-            let result = LogicProbe.inspect().dictionary
-            let message = name == "logic_diagnostic" ? "Diagnostic établi. Aucune commande musicale n'a été exécutée." : "État de Logic lu. Aucun changement effectué."
+            let probe = LogicProbe.inspect()
+            let details = probe.dictionary
+            let message = name == "logic_diagnostic"
+                ? "\(probe.summary) macOS \(details["macOSVersion"] ?? "inconnu") ; serveur \(details["serverVersion"] ?? "inconnu")."
+                : probe.summary
             return success(id: id, result: ["content": [["type": "text", "text": message]],
-                                            "structuredContent": result, "isError": false])
+                                            "structuredContent": details, "isError": false])
         case "subscriptions/listen":
             guard params["notifications"] is [String: Any] else {
                 return error(id: id, code: -32602, message: "Invalid notification filter")
