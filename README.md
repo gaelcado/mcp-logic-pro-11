@@ -17,11 +17,11 @@ Les tests automatiques vérifient le serveur et ses réponses MCP. **Ils ne prou
 ## Installer la préversion
 
 1. Téléchargez le fichier `logic-pro-11-mcp-0.1.0-preview-macos-universal.zip` depuis l'artefact de la [dernière compilation GitHub](https://github.com/gaelcado/mcp-logic-pro-11/actions/workflows/build.yml), puis décompressez-le.
-2. Glissez `Logic Pro 11 MCP.app` dans votre dossier **Applications**. Aucun Xcode, Swift, Node ou Homebrew n'est requis pour lancer le paquet.
-3. Dans votre assistant **compatible MCP 2026-07-28 et avec les serveurs locaux stdio**, ajoutez un serveur avec la commande ci-dessous. Remplacez `VOTRE_NOM` par votre nom de compte Mac ; laissez les arguments vides.
+2. Glissez `Logic Pro 11 MCP.app` dans le dossier **Applications** du Mac. Aucun Xcode, Swift, Node ou Homebrew n'est requis pour lancer le paquet.
+3. Dans votre assistant **compatible MCP 2026-07-28 et avec les serveurs locaux stdio**, ajoutez un serveur avec la commande ci-dessous et laissez les arguments vides.
 
    ```text
-   /Users/VOTRE_NOM/Applications/Logic Pro 11 MCP.app/Contents/MacOS/logic-pro-11-mcp
+   /Applications/Logic Pro 11 MCP.app/Contents/MacOS/logic-pro-11-mcp
    ```
 
 4. Relancez l'assistant et demandez « Donne-moi l'état de Logic Pro ». Si votre assistant ne montre pas les deux outils, reconnectez le serveur ou actualisez ses outils. Un serveur découvert par MCP ne signifie pas que l'assistant a chargé ses outils dans la conversation.
