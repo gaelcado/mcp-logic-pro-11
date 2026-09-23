@@ -33,3 +33,10 @@ Créer un serveur MCP portable pour macOS, destiné à des musiciens utilisant L
 - Décision sur Logic 11 : https://github.com/MongLong0214/logic-pro-mcp/issues/908
 - Notes de version Apple Logic 11 : https://support.apple.com/en-il/126835
 - Spécification MCP 2026-07-28 : https://modelcontextprotocol.io/specification/2026-07-28
+
+## Avancement vérifié le 23 septembre 2026
+
+- Phases 1 et 2 : audit des canaux et dix outils amont consigné dans `REFERENCE.md`. Choix d'un serveur Swift sans dépendance de paquet, avec paquet universel macOS arm64/x86_64. Aucun code amont copié.
+- Phase 3 : sélection automatique pure pour 11.1 et 11.2, avec refus des autres versions et ambiguïtés ; tests unitaires. La détection réelle du paquet Logic reste à observer chez les pilotes.
+- Phase 4 : `server/discover`, métadonnées par requête, `tools/list`, `tools/call`, cache et accusé d'abonnement statique implémentés. Deux diagnostics en lecture seule. Tests XCTest et échange stdio passent ; MCP Inspector CLI 2.7.0 en mode moderne confirme discovery, liste et appel. Aucun Logic local.
+- Phases 5 et 6 : procédure pilote écrite, paquet préversion construit localement, non notarisé. Il faut encore les deux Mac Logic, un client MCP 2026-07-28 réel, des commandes musicales qualifiées et une identité Developer ID pour une distribution sans friction Gatekeeper.

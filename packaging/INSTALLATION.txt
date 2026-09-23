@@ -1,0 +1,9 @@
+Logic Pro 11 MCP — préversion de diagnostic
+
+1. Glissez « Logic Pro 11 MCP.app » dans votre dossier Applications.
+2. Dans votre client MCP, indiquez comme commande :
+   /Users/VOTRE_NOM/Applications/Logic Pro 11 MCP.app/Contents/MacOS/logic-pro-11-mcp
+3. Relancez le client et demandez « état de Logic Pro ».
+
+Cette préversion ne modifie pas Logic. Le protocole requis est MCP 2026-07-28.
+Voir README.md et docs/PILOT.md du dépôt pour le diagnostic et la désinstallation.

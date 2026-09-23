@@ -1,0 +1,27 @@
+name: Build and test
+on:
+  push:
+  pull_request:
+
+jobs:
+  macos:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unit and protocol tests
+        run: |
+          swift test
+          python3 scripts/protocol_smoke.py .build/debug/logic-pro-11-mcp
+      - name: Package universal preview
+        run: sh scripts/package.sh
+      - name: Check package
+        run: |
+          lipo -archs "dist/Logic Pro 11 MCP.app/Contents/MacOS/logic-pro-11-mcp"
+          codesign --verify --deep --strict "dist/Logic Pro 11 MCP.app"
+          (cd dist && shasum -a 256 -c SHA256SUMS.txt)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: logic-pro-11-mcp-macos-universal-preview
+          path: |
+            dist/*.zip
+            dist/SHA256SUMS.txt
